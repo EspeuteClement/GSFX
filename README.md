@@ -19,3 +19,16 @@ This structure has 6 fields :
 * `int32_t period_start` The period of the waveform at wich the fx stars. A value of 0 means the highest pitch possible.
 * `int32_t period_sweep` How much the period changes per 4 sample.
 *  `int32_t length` The lenght in samples of the FX.
+
+## GSFX Tool Manual
+You edit a Pattern. Each Pattern are composed of maximum 8 FX. An FX is a Simple sound.
+
+* A Plays the current Pattern
+* UP/DOWN Changes the current parameter
+* LEFT/RIGHT changes the current parameter value. Hold B to change faster. On Pediod, holding B allows you to multiply or divide by two your perdiod (changes the octave).
+* Pattern POS Changes the current FX you edit
+* PATTERN NUM Changes the number of FX in the current pattern
+* SAVE SLOT changes the current PATTERN you edit in the save file (up to 8)
+* COPY/PASTE : LEFT/RIGHT to change between COPY and PASTE. Press B to perform the selected action. COPY copies the current FX, PASTE pastes the previouly copied FX.
+* SAVING : Press MENU to save.
+
