@@ -18,12 +18,12 @@ public:
     // Users create and use these
     union FX {
         struct {
-            GSFX::WaveType type;
-            int32_t volume_start;
-            int32_t volume_sweep;
+            GSFX::WaveType type; // Type of the wave that will be played
+            int32_t volume_start; // Volume amplitude as a 8 bit fixed point 
+            int32_t volume_sweep; // How much the volume change for each sample (8 bit fixed point)
 
-            int32_t freq_start; 
-            int32_t freq_sweep;
+            int32_t period_start; 
+            int32_t period_sweep;
 
             int32_t length;
         };
@@ -93,7 +93,7 @@ private:
 
         inline int32_t getFrequency()
         {
-            _current_fx_freq += _current_fx.freq_sweep;
+            _current_fx_freq += _current_fx.period_sweep;
             return (_current_fx_freq);
         } __attribute__((optimize("-O3")));
         

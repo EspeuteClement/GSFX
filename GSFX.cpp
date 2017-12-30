@@ -121,7 +121,7 @@ void GSFX::Sound_Handler_GSFX::play(const GSFX::FX & fx)
     _current_fx = fx;
     _current_fx_time = 0;
     _current_fx_volume = fx.volume_start;
-    _current_fx_freq = fx.freq_start;
+    _current_fx_freq = fx.period_start;
 
     resetGenerators();
 }
