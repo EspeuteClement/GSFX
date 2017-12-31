@@ -65,7 +65,7 @@ void setup()
     gb.begin();
     is_init = gsfx.init() != -1;
 
-    //gb.save.get(0, &save, sizeof(Save));
+    gb.save.get(0, &save, sizeof(Save));
 
     if (!save.is_init)
     {
@@ -198,10 +198,12 @@ void loop()
         if (cursor == 0)
         {
             fx->type = (GSFX::WaveType)(((int)fx->type + dir + (int)GSFX::WaveType::WAVE_COUNT) % (int)GSFX::WaveType::WAVE_COUNT);
-
-            for (int i = 0; i < num_params; i++)
+            if (dir!=0)
             {
-                fx->params[i+1] = waves_settings[(uint32_t)fx->type]->defaults[i];
+                for (int i = 0; i < num_params; i++)
+                {
+                    fx->params[i+1] = waves_settings[(uint32_t)fx->type]->defaults[i];
+                }
             }
         }
         else if (cursor > 0 && cursor < 6)
