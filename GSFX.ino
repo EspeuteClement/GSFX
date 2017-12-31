@@ -6,11 +6,17 @@ bool is_init = 0;
 
 const int8_t NUM_PATTERNS = 8;
 
+
+
 struct Save
 {
     uint8_t is_init;
     GSFX::Pattern patterns[NUM_PATTERNS];
 } save = {0};
+
+const SaveDefault savefileDefaults[] {
+    {0, SAVETYPE_BLOB, 0, sizeof(Save)}
+};
 
 const int num_params = 5;
 struct params_settings
@@ -63,6 +69,7 @@ char * waves_names[] = {"NOISE","SQUARE"};
 void setup()
 {
     gb.begin();
+    gb.save.config(savefileDefaults);
     is_init = gsfx.init() != -1;
 
     gb.save.get(0, &save, sizeof(Save));
@@ -288,7 +295,7 @@ void loop()
         if (gb.buttons.pressed(BUTTON_MENU))
         {
             save.is_init = 1;
-            gb.save.set(0, &save, sizeof(save));
+            gb.save.set(0, &save, sizeof(Save));
             message_time = 50;
             sprintf(message_buffer,"SAVED");
         }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Gamebuino-Meta.h>
 #include <utility/Sound.h>
 
 class GSFX
@@ -7,6 +8,7 @@ class GSFX
 public:
     static const uint8_t FPP = 8; // Fixed point precision
     static const uint8_t MAX_PATTERNS = 8; //Max FX per Pattern
+    static const uint8_t SR_DIVIDER = 44100 / SOUND_FREQ;
 
     enum class WaveType : int32_t // so we can cast FX as an int32_t array
     {
@@ -55,7 +57,7 @@ private:
     class Sound_Handler_GSFX : public Gamebuino_Meta::Sound_Handler
     {
     public:
-        static const int NUM_SAMPLES = 2048;
+        static const int NUM_SAMPLES = 2048 / GSFX::SR_DIVIDER;
         uint8_t _buffer[NUM_SAMPLES]; // Put first so it's memory aligned to 32bit
         Sound_Handler_GSFX(GSFX * parent);
         ~Sound_Handler_GSFX();
@@ -87,13 +89,13 @@ private:
 
         inline uint8_t getVolume() 
         {
-            _current_fx_volume += _current_fx.volume_sweep;
+            _current_fx_volume += _current_fx.volume_sweep * SR_DIVIDER;
             return (min(127,max(0,(_current_fx_volume >> FPP)))); 
         } __attribute__((optimize("-O3")));
 
         inline int32_t getFrequency()
         {
-            _current_fx_freq += _current_fx.period_sweep;
+            _current_fx_freq += _current_fx.period_sweep * SR_DIVIDER;
             return (_current_fx_freq);
         } __attribute__((optimize("-O3")));
         
