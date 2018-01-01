@@ -45,7 +45,7 @@ const params_settings noise =
 
 const params_settings * const waves_settings[] = {&noise,&square};
 
-const char * names[] = {"VOLUME", "VOL -/+", "PERIOD", "PER -/+", "LENGHT"};
+const char * names[] = {"VOLUME", "VOL -/+", "PERIOD", "PER -/+", "LENGTH"};
 const int mult[] = {256,1,16,1,5000};
 uint32_t s_vol = 0;
 uint32_t cursor = 0;
