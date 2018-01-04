@@ -10,7 +10,7 @@ Hello, this is GSFX, a small and simple library that allows you to play simple s
 4. After the `gb.begin();`, put `gsfx.init();`
 5. Now play sound with `gsfx.play({GSFX::WaveType::SQUARE, 0x8000, 0, 8192,0,5000});`
 
-## GSFX::Pattern
+## GSFX::FX
 
 This structure has 6 fields :
 * `GSFX::WaveType type` Either GSFX::WaveType::SQUARE (melodic tones) or GSFX::WaveType::NOISE (gritty noises).
@@ -20,15 +20,34 @@ This structure has 6 fields :
 * `int32_t period_sweep` How much the period changes per 4 sample.
 *  `int32_t length` The lenght in samples of the FX.
 
+## Playing FX chains
+You can chain FX together for more complex sounds (usefull for playing two different tones for example).
+
+`void GSFX::Sound_Handler_GSFX::play(const GSFX::FX * const pattern, uint8_t length)`
+
+With pattern an array of FX and length the number of FX in the pattern.
+
+Example :
+```c++
+const GSFX::FX chain[] = 
+{
+    {GSFX::WaveType::SQUARE, 32768, 0,8192, 0,3000},
+    {GSFX::WaveType::SQUARE, 32768, -16,4096, 0,6000}
+};
+
+gsfx.play(chain, 2);
+```
+
+
 ## GSFX Tool Manual
 You edit a Pattern. Each Pattern are composed of maximum 8 FX. An FX is a Simple sound.
 
-* A Plays the current Pattern
-* UP/DOWN Changes the current parameter
-* LEFT/RIGHT changes the current parameter value. Hold B to change faster. On Pediod, holding B allows you to multiply or divide by two your perdiod (changes the octave).
+* <kbd>A</kbd> Plays the current Pattern
+* <kbd>UP</kbd>/<kbd>DOWN</kbd> Changes the current parameter
+* <kbd>LEFT</kbd>/<kbd>RIGHT</kbd> changes the current parameter value. Hold B to change faster. On Pediod, holding <kbd>B</kbd> allows you to multiply or divide by two your perdiod (changes the octave).
 * Pattern POS Changes the current FX you edit
 * PATTERN NUM Changes the number of FX in the current pattern
 * SAVE SLOT changes the current PATTERN you edit in the save file (up to 8)
-* COPY/PASTE : LEFT/RIGHT to change between COPY and PASTE. Press B to perform the selected action. COPY copies the current FX, PASTE pastes the previouly copied FX.
+* COPY/PASTE : <kbd>LEFT</kbd>/<kbd>RIGHT</kbd> to change between COPY and PASTE. Press <kbd>B</kbd> to perform the selected action. COPY copies the current FX, PASTE pastes the previouly copied FX.
 * SAVING : Press MENU to save.
 
