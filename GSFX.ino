@@ -5,13 +5,14 @@ GSFX gsfx;
 bool is_init = 0;
 
 const int8_t NUM_PATTERNS = 8;
-
+const int8_t NUM_FX = 8;
 
 
 struct Save
 {
-    uint8_t is_init;
-    GSFX::Pattern patterns[NUM_PATTERNS];
+    uint8_t version;
+    GSFX::FX patterns[NUM_PATTERNS][NUM_FX];
+    uint8_t length[NUM_PATTERNS];
 } save = {0};
 
 const SaveDefault savefileDefaults[] {
@@ -54,7 +55,7 @@ uint32_t default_timer = 100;
 
 const uint32_t bar_length = 32;
 
-GSFX::Pattern * pattern;
+GSFX::FX * pattern;
 uint8_t current_pattern_fx;
 uint8_t current_save_slot;
 
@@ -74,20 +75,20 @@ void setup()
 
     gb.save.get(0, &save, sizeof(Save));
 
-    if (!save.is_init)
+    if (save.version != 2)
     {
         for (int p = 0; p < NUM_PATTERNS; p++)
         {
-            pattern = &save.patterns[p];
-            memset(pattern, 0, sizeof(GSFX::Pattern));
+            pattern = &save.patterns[p][0];
+            memset(pattern, 0, sizeof(GSFX::FX[NUM_FX]));
             current_pattern_fx = 0;
-            pattern->length = 1;
+            save.length[p] = 1;
             for (int j = 0; j < 8; j ++)
             {
                 for (int i = 0; i < num_params; i++)
                 {
-                    pattern->fxs[j].params[i+1] = square.defaults[i];
-                    pattern->fxs[j].type = GSFX::WaveType::SQUARE;
+                    pattern[j].params[i+1] = square.defaults[i];
+                    pattern[j].type = GSFX::WaveType::SQUARE;
                 }
             }
         }
@@ -96,7 +97,7 @@ void setup()
 
     is_copy = true;
     
-    pattern = &save.patterns[0];
+    pattern = &save.patterns[0][0];
     current_save_slot = 0;
 
 
@@ -110,8 +111,8 @@ void loop()
         gb.display.setColor(WHITE);
         //gb.display.printf("%d",gb.getCpuLoad());
 
-        pattern = &save.patterns[current_save_slot];
-        GSFX::FX * fx = &pattern->fxs[current_pattern_fx];
+        pattern = &save.patterns[current_save_slot][0];
+        GSFX::FX * fx = &pattern[current_pattern_fx];
 
         if (gb.buttons.pressed(BUTTON_A))
         {
@@ -122,7 +123,7 @@ void loop()
                     2
                 });*/
 
-            gsfx.play(*pattern);
+            gsfx.play(pattern,save.length[current_save_slot]);
         }
 
         if (gb.buttons.pressed(BUTTON_UP))
@@ -175,7 +176,7 @@ void loop()
 
         gb.display.printf("PATTERN POS %d\n",current_pattern_fx);
         gb.display.setCursorX(8);
-        gb.display.printf("PATTERN NUM %d\n",pattern->length);
+        gb.display.printf("PATTERN NUM %d\n",save.length[current_save_slot]);
         gb.display.setCursorX(8);
         gb.display.printf("SAVE SLOT %d\n",current_save_slot);
 
@@ -259,12 +260,12 @@ void loop()
         else if (cursor == 6)
         {
             // Pattern position
-            current_pattern_fx = (current_pattern_fx + pattern->length + dir) % pattern->length;
+            current_pattern_fx = (current_pattern_fx + save.length[current_save_slot] + dir) % save.length[current_save_slot];
         }
         else if (cursor == 7)
         {
             // Pattern number
-            pattern->length = (((pattern->length-1) + GSFX::MAX_PATTERNS + dir ) % GSFX::MAX_PATTERNS) + 1;
+            save.length[current_save_slot] = (((save.length[current_save_slot]-1) + NUM_FX + dir ) % NUM_FX) + 1;
         }
         else if (cursor == 8)
         {
@@ -294,7 +295,7 @@ void loop()
 
         if (gb.buttons.pressed(BUTTON_MENU))
         {
-            save.is_init = 1;
+            save.version = 2;
             gb.save.set(0, &save, sizeof(Save));
             message_time = 50;
             sprintf(message_buffer,"SAVED");

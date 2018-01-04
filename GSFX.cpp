@@ -27,9 +27,9 @@ void GSFX::play(const GSFX::FX & fx)
     _handler.play(fx);
 }
 
-void GSFX::play(const GSFX::Pattern & pattern)
+void GSFX::play(const GSFX::FX * const pattern, uint8_t length)
 {
-    _handler.play(pattern);
+    _handler.play(pattern, length);
 }
 
 
@@ -63,6 +63,8 @@ bool GSFX::Sound_Handler_GSFX::init()
     _noise_period = 0;
 
     _current_pattern_fx = UINT8_MAX;
+    _current_pattern_length = 0;
+    _current_pattern = NULL;
 
     resetGenerators();
 }
@@ -72,10 +74,10 @@ void GSFX::Sound_Handler_GSFX::update()
     // Check if we should advance in the pattern
     if (_current_fx_time >= _current_fx.length)
     {
-        if (_current_pattern_fx < _current_pattern.length-1)
+        if (_current_pattern_fx < _current_pattern_length-1)
         {
             _current_pattern_fx++;
-            play(_current_pattern.fxs[_current_pattern_fx]);
+            play(_current_pattern[_current_pattern_fx]);
         }
     }
 
@@ -126,11 +128,12 @@ void GSFX::Sound_Handler_GSFX::play(const GSFX::FX & fx)
     resetGenerators();
 }
 
-void GSFX::Sound_Handler_GSFX::play(const GSFX::Pattern & pattern)
+void GSFX::Sound_Handler_GSFX::play(const GSFX::FX * const pattern, uint8_t length)
 {
     _current_pattern = pattern;
     _current_pattern_fx = 0;
-    play(_current_pattern.fxs[_current_pattern_fx]);
+    _current_pattern_length = length;
+    play(_current_pattern[_current_pattern_fx]);
 }
 
 void GSFX::Sound_Handler_GSFX::resetGenerators()

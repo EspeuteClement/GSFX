@@ -32,12 +32,6 @@ public:
         int32_t params[6];
     };
 
-    struct Pattern
-    {
-        FX fxs[MAX_PATTERNS];
-        uint8_t length;
-    };
-
     GSFX();
     ~GSFX();
 
@@ -46,7 +40,7 @@ public:
 
     // Plays the given FX structure
     void play(const GSFX::FX & fx);
-    void play(const GSFX::Pattern & pattern);
+    void play(const GSFX::FX * const pattern, uint8_t length);
 
 
 
@@ -69,12 +63,13 @@ private:
         void generateSquare() __attribute__((optimize("-O3")));
 
         void play(const GSFX::FX & fx);
-        void play(const GSFX::Pattern & pattern);
+        void play(const GSFX::FX * const pattern, uint8_t length);
 
         uint32_t getPos();
         GSFX::FX _current_fx;
-        GSFX::Pattern _current_pattern;
+        GSFX::FX const * _current_pattern;
         uint8_t _current_pattern_fx;
+        uint8_t _current_pattern_length;
 
         uint32_t _current_fx_time;
         int32_t _current_fx_volume;
