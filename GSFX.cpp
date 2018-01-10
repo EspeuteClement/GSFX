@@ -32,6 +32,11 @@ void GSFX::play(const GSFX::FX * const pattern, uint8_t length)
     _handler.play(pattern, length);
 }
 
+void GSFX::play(const GSFX::FX * const pattern, uint8_t length, uint16_t pitch_scale)
+{
+    _handler.play(pattern, length, pitch_scale);
+}
+
 
 // SOUND HANDLER
 
@@ -65,6 +70,8 @@ bool GSFX::Sound_Handler_GSFX::init()
     _current_pattern_fx = UINT8_MAX;
     _current_pattern_length = 0;
     _current_pattern = NULL;
+
+    _pitch_scale = 1 << FPP;
 
     resetGenerators();
 }
@@ -136,6 +143,15 @@ void GSFX::Sound_Handler_GSFX::play(const GSFX::FX * const pattern, uint8_t leng
     play(_current_pattern[_current_pattern_fx]);
 }
 
+void GSFX::Sound_Handler_GSFX::play(const GSFX::FX * const pattern, uint8_t length, uint16_t pitch_scale)
+{
+    _current_pattern = pattern;
+    _current_pattern_fx = 0;
+    _current_pattern_length = length;
+    play(_current_pattern[_current_pattern_fx]);
+    _pitch_scale = pitch_scale;
+}
+
 void GSFX::Sound_Handler_GSFX::resetGenerators()
 {
     _square_period = 0;
@@ -157,7 +173,8 @@ void GSFX::Sound_Handler_GSFX::generateNoise()
             bool bit = (lfsr ^ (lfsr >> 1)) & 1;
             lfsr = (lfsr >> 1) ^ (bit << 14);
         }
-        uint32_t sample = (lfsr & 1) ? 0x80808080 : (volume << 24) | (volume << 16) | (volume << 8) | volume;
+        volume = (lfsr & 1) ?  0x80 + getVolume() : 0x80 - getVolume();
+        uint32_t sample = (volume << 24) | (volume << 16) | (volume << 8) | volume;
 
         _head_index = (_head_index+1)%(NUM_SAMPLES>>2);
         _current_fx_time +=4*SR_DIVIDER;

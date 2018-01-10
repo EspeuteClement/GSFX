@@ -41,7 +41,7 @@ public:
     // Plays the given FX structure
     void play(const GSFX::FX & fx);
     void play(const GSFX::FX * const pattern, uint8_t length);
-
+    void play(const GSFX::FX * const pattern, uint8_t length, uint16_t pitch_scale);
 
 
 private:
@@ -64,6 +64,7 @@ private:
 
         void play(const GSFX::FX & fx);
         void play(const GSFX::FX * const pattern, uint8_t length);
+        void play(const GSFX::FX * const pattern, uint8_t length, uint16_t pitch_scale);
 
         uint32_t getPos();
         GSFX::FX _current_fx;
@@ -75,6 +76,7 @@ private:
         int32_t _current_fx_volume;
         int32_t _current_fx_freq;
         uint16_t _head_index;
+        int16_t _pitch_scale;
 
         int32_t _noise_period;
         int32_t _square_period;
@@ -91,7 +93,7 @@ private:
         inline int32_t getFrequency()
         {
             _current_fx_freq += _current_fx.period_sweep * SR_DIVIDER;
-            return (_current_fx_freq);
+            return ((_current_fx_freq * _pitch_scale) >> FPP);
         } __attribute__((optimize("-O3")));
         
         GSFX *_parent;
