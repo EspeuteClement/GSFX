@@ -27,6 +27,11 @@ void GSFX::play(const GSFX::FX & fx)
     _handler.play(fx);
 }
 
+void GSFX::play(const GSFX::FX * const pattern)
+{
+	_handler.play(pattern, 0);
+}
+
 void GSFX::play(const GSFX::FX * const pattern, uint8_t length)
 {
     _handler.play(pattern, length);
@@ -81,7 +86,7 @@ void GSFX::Sound_Handler_GSFX::update()
     // Check if we should advance in the pattern
     if (_current_fx_time >= _current_fx.length)
     {
-        if (_current_pattern_fx < _current_pattern_length-1)
+        if ((_current_pattern_length != 0 && _current_pattern_fx < _current_pattern_length-1) || (_current_pattern_length == 0 && ((uint32_t)_current_pattern[_current_pattern_fx].type & CONTINUE_FLAG)) )
         {
             _current_pattern_fx++;
             play(_current_pattern[_current_pattern_fx]);
@@ -94,9 +99,11 @@ void GSFX::Sound_Handler_GSFX::update()
         switch(_current_fx.type)
         {
             case GSFX::WaveType::NOISE:
+			case GSFX::WaveType::NOISE_CONTIUE:
                 generateNoise();
                 break;
             case GSFX::WaveType::SQUARE:
+			case GSFX::WaveType::SQUARE_CONTINUE:
                 generateSquare();
                 break;
             default:

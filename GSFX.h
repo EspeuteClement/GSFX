@@ -10,11 +10,15 @@ public:
     static const uint8_t MAX_PATTERNS = 8; //Max FX per Pattern
     static const uint8_t SR_DIVIDER = 44100 / SOUND_FREQ;
 
-    enum class WaveType : int32_t // so we can cast FX as an int32_t array
-    {
-        NOISE,
-        SQUARE,
-        WAVE_COUNT
+	static const int32_t CONTINUE_FLAG = (1 << 31);
+	enum class WaveType : int32_t // so we can cast FX as an int32_t array
+	{
+		NOISE,
+		SQUARE,
+		WAVE_COUNT,
+
+		NOISE_CONTIUE	= NOISE	 | CONTINUE_FLAG,
+		SQUARE_CONTINUE = SQUARE | CONTINUE_FLAG,
     };
 
     // Users create and use these
@@ -40,6 +44,11 @@ public:
 
     // Plays the given FX structure
     void play(const GSFX::FX & fx);
+
+	// Plays pattern array (Will finish if wave type does not contain the CONTINUE_FLAG flag)
+	void play(const GSFX::FX * const pattern);
+
+	// DEPRECATED : Plays a fx array containing length FXs
     void play(const GSFX::FX * const pattern, uint8_t length);
     void play(const GSFX::FX * const pattern, uint8_t length, uint16_t pitch_scale);
 
